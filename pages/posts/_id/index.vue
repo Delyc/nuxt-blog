@@ -3,7 +3,7 @@
     <section class="post">
       <h1 class="post-title">{{ loadedPost.title }}</h1>
       <div class="post-details">
-        <div class="post-detail">Last updated on {{ loadedPost.updatedDate }}</div>
+        <div class="post-detail">Last updated on {{ loadedPost.updatedDate | date }}</div>
         <div class="post-detail">Written by {{ loadedPost.author }}</div>
       </div>
       <p class="post-content">{{ loadedPost.content }}</p>
@@ -15,23 +15,18 @@
 </template>
 
 <script>
+
 export default {
-  asyncData(context, callback) {
-    setTimeout(() => {
-      callback(null, {
-        loadedPost: {
-          id: "1",
-          title: "First Post (ID: " + context.route.params.id + ")",
-          previewText: "This is our first post!",
-          author: 'Maximilian',
-          updatedDate: new Date(),
-          content: 'Some dummy text which is definitely not the preview text though!',
-          thumbnail:
-            "https://static.pexels.com/photos/270348/pexels-photo-270348.jpeg"
-        }
-      });
-    }, 1000);
+  asyncData(context) {
+    return context.$axios.$get('/posts/' + context.params.id +'.json')
+    .then(data=> {
+      return {
+        loadedPost: data
+      }
+    })
+    .catch(e=> context.error(e))
   }
+
 };
 </script>
 
